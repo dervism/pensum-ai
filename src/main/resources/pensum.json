@@ -1,0 +1,253 @@
+[
+  {
+    "kompetansemål": 1,
+    "tittel": "Planlegge, utvikle og dokumentere løsninger med innebygd personvern og sikkerhet",
+    "delmål": [
+      "Planlegging: Forklare hvordan utvikling av en tjeneste henger sammen med virksomhetens strategi",
+      "Planlegging: Bruker ulike metoder og verktøy i forbindelse med planlegging av tjeneste",
+      "Planlegging: Foreslår og begrunner idé og plan for utvikling av en tjeneste",
+      "Utvikling: Bruker standard for dataprogrammer og regler for kodespråk i virksomheten",
+      "Utvikling: Lager og oppdaterer databasetabell",
+      "Utvikling: Lager kode",
+      "Utvikling: Bruker virksomhetens versjonskontroll",
+      "Utvikling: Opprette integrasjoner",
+      "Utvikling: Lage script",
+      "Testing: Bruker virksomhetens rutiner for brukertesting",
+      "Testing: Bruker ulike metoder og verktøy i forbindelse med brukertesting",
+      "Testing: Planlegge, begrunne og gjennomføre brukertest tilpasset tjenesten",
+      "Testing: Feilretting og kodegjennomgang i henhold til virksomhetens rutiner",
+      "Testing: Oppdatere database og utføre nødvendige endringer ved behov",
+      "Realisering: Bruker virksomhetens rutiner for verifisering av tjeneste",
+      "Realisering: Kople opp og integrere tjenesten i fag- og brukermiljø",
+      "Realisering: Samarbeid med drift- og prosjektleder. Se kompetansemål 14",
+      "Drift, vedlikehold og forvaltning: Samarbeid med drift, prosjekteier og forvalter av avtale.",
+      "Drift, vedlikehold og forvaltning: Undersøke brukernes videre behov. Se kompetansemål 3.",
+      "Drift, vedlikehold og forvaltning: Kontinuerlig feilretting og oppdatering av databasetabell",
+      "Hele prosessen: Bruker virksomhetens interne rutiner",
+      "Hele prosessen: kjenner til og kan bruke virksomhetens verktøy og systemer"
+    ]
+  },
+  {
+    "kompetansemål": 2,
+    "tittel": "Planlegge, utvikle og dokumentere løsninger som er energieffektive og bærekraftige",
+    "delmål": [
+      "Hele prosessen: Se delmål under kompetansemål 1",
+      "Forklare hva energieffekivt og bærekraftig betyr i utviklingen av en tjeneste",
+      "Foreslå og begrunne relevante energieffektive og bærekraftige valg i utviklingen av en tjeneste",
+      "Utvikle og integrere energieffektive og bærekraftige løsninger i tjenesten"
+    ]
+  },
+  {
+    "kompetansemål": 3,
+    "tittel": "Videreutvikle en løsning for å ivareta brukernes behov",
+    "delmål": [
+      "Undersøke brukernes videre behov som kunnskapsgrunnlag for videreutvikling av en tjeneste",
+      "Vurdere hva som kan optimalisere ytelsen til løsningen og foreslå tiltak",
+      "Planlegge, gjennomføre og evaluere en brukerreise",
+      "Eventuelt oppdatere databehandleravtale og kravspesifikasjon",
+      "Ved behov for videreutvikling: Se også delmål i kompetansemål 1"
+    ]
+  },
+  {
+    "kompetansemål": 4,
+    "tittel": "Planlegge, utvikle, sette opp og dokumentere systemer for datainnsamling, analyse og visualisering",
+    "delmål": [
+      "Bruke ulike formater for organisering og lagring av data",
+      "Bruke ulike verktøy til analyse og visualisering av data",
+      "Teste ut og bruke ulike programmeringsspråk for visualisering av data"
+    ]
+  },
+  {
+    "kompetansemål": 5,
+    "tittel": "Planlegge, utvikle, sette opp og dokumentere integrasjoner mellom ulike systemer og databaser",
+    "delmål": [
+      "Planlegge og lage et forslag til god struktur i en database hos virksomheten",
+      "Tilrettelegge for og opprettholde nok minneplass i databasen",
+      "Bruker nøkkelindikatorer (KPI-er) i sitt arbeid",
+      "Gjøre utvalg og begrunne valg av relevant data til en løsning eller tjeneste",
+      "Planlegge, sette opp og dokumentere integrasjoner mellom ulike systemer og databaser",
+      "Bruke systemer og databaser som er tilgjengelig for virksomheten"
+    ]
+  },
+  {
+    "kompetansemål": 6,
+    "tittel": "Utvikle og bruke dokumentasjon og veiledninger",
+    "delmål": [
+      "Bruke, samarbeide og dokumentere i versjonskontrollen til virksomheten",
+      "Lese, finne fram i og bruke standard og veiledning i programmene til virksomheten",
+      "Utvikle dokumentasjon og veiledninger internt i teamet, og for samarbeidet med for eksempel driftsavdelingen",
+      "Utvikle veiledninger til eksterne som skal ta i bruk løsninger i virksomheten",
+      "Holde seg oppdatert på tekniske spesifikasjoner",
+      "Dokumentere arbeidsoppgaver, planer og prosjekter",
+      "Finne dokumentasjon og veiledninger på internett for gjenbruk",
+      "Vurdere og begrunne hvilke programmer som kan brukes til å lage dokumentasjon og veiledning til ulike løsninger",
+      "Dokumentere et script og forklare det"
+    ]
+  },
+  {
+    "kompetansemål": 7,
+    "tittel": "Veilede brukere i ulike oppgaver",
+    "delmål": [
+      "Lage og holde kurs for eksterne og interne",
+      "Samarbeide med drift om veiledninger som brukere trenger til ulike løsninger",
+      "Utarbeide tekniske spesifikasjoner på en lettfattelig måte",
+      "Lage FAQ-liste",
+      "Lage en god disposisjon for en veiledningsmanual med virksomhetens designprofil. Gjerne i samarbeid med kommunikasjonsavdelingen.",
+      "Lage ulike former for veilednings- og dokumentasjonsmateriale i brukertester internt i virksomheten"
+    ]
+  },
+  {
+    "kompetansemål": 8,
+    "tittel": "Håndtere påloggingsopplysninger på en sikker og forsvarlig måte",
+    "delmål": [
+      "Bli kjent med virksomhetens retningslinjer for sikkerhet, og dokumentere hvordan det brukes i arbeidet",
+      "Opprette og bruke samtykkeskjema i sitt arbeid der det er nødvendig",
+      "Bruke virksomhetens rutiner og relevant lovverk for innhenting og lagring av personopplysninger.",
+      "Kjenner til og kan finne fram til GDPR og bruker det i arbeidet",
+      "Reflektere over og dokumentere konsekvenser av brudd på GDPR",
+      "Forslag: Identity and access management, To-faktorautentisering, ID-porten og ulike sikkerhetsnivåer, Single sing-on og integrere pålogging via Azure AD"
+    ]
+  },
+  {
+    "kompetansemål": 9,
+    "tittel": "Utvikle og tilpasse brukergrensesnitt som ivaretar krav til universell utforming",
+    "delmål": [
+      "Delta i virksomhetens relevante frontend-oppgaver",
+      "Kjenne og kvalitetssikre tjenesten opp mot WCAG 2.0"
+    ]
+  },
+  {
+    "kompetansemål": 10,
+    "tittel": "Velge og bruke relevante rammeverk og moduler til utvikling",
+    "delmål": [
+      "Forklare sammenhengen mellom ulike faser i en utviklingsprosess. Dette kan gjøres i en prosjektplan eller visualiseres i et program.",
+      "Utforske og bruke virksomhetens programmer, plattformer og apper for utvikling",
+      "Utforske relevante programmer, plattformer og apper for utvikling utenfor virksomheten og foreslå mulig bruk av disse internt i et prosjekt"
+    ]
+  },
+  {
+    "kompetansemål": 11,
+    "tittel": "Beskrive konsekvenser av teknisk gjeld i løsninger",
+    "delmål": [
+      "Forklare og dokumentere hva teknisk gjeld er",
+      "Ved utvikling av en løsning: Vurdere om virksomheten kan bygge videre på en løsning som allerede finnes",
+      "Forklare og dokumentere hvorfor gjenbruk av data påvirker ressurser i virksomheten",
+      "Forklare og dokumentere felles løsning for brukere for å unngå felles gjeld",
+      "Forklare, begrunne og dokumentere hvorfor gjenbruk av data påvirker ressurser i virksomheten, og hvordan virksomheten kan spare penger på gjenbruk",
+      "Forklare og dokumentere hvorfor gjenbruk av data påvirker ressurser i virksomheten",
+      "Vurdere og dokumentere fordeler og ulemper ved open source"
+    ]
+  },
+  {
+    "kompetansemål": 12,
+    "tittel": "Beskrive hvilke krav som ulike løsninger stiller til infrastruktur, og hvilke muligheter og begrensninger som følger av infrastrukturen",
+    "delmål": [
+      "Lage og dokumentere nettverkskisse over infrastrukturen",
+      "Dokumentere, teste og foreslå forbedringer til infrastruktur for å avdekke muligheter og begrensninger",
+      "Dokumentere hvilke infrastrukturstandarder som benyttes i virksomheten",
+      "Forklare hvilke krav til infrastrutur har til løsning ut ifra størrelsen på strukturen i virksomheten",
+      "Foreslå og begrunne mulige tilpasninger til løsninger"
+    ]
+  },
+  {
+    "kompetansemål": 13,
+    "tittel": "Gjøre rede for og anvende gjeldende regelverk for personvern, opphavsrett og informasjonssikkerhet i eget arbeid",
+    "delmål": [
+      "Kjenne til og bruker relevant lovverk og intern policy i arbeidet",
+      "Opprette og bruke samtykkeskjema i arbeidet",
+      "Følge, bruke og foreslå forbedringer av virksomhetens rutiner for ivaretagelse av informasjonssikkerhet i en utviklingsprosess",
+      "Forstå og bruke engelskspråklige tekster og regelverk som er utenfor EØS",
+      "Tips til policy og regelverk: Åndsverkloven, Vurdering av personvernkonsekvenser (DPIA), og taushetserklæring"
+    ]
+  },
+  {
+    "kompetansemål": 14,
+    "tittel": "Bruke utviklingsstrategier og samarbeide med andre utviklere",
+    "delmål": [
+      "Delta i relevante møter i virksomheten",
+      "Samarbeide med prosjekteier- og leder",
+      "Samarbeide med interne og eksterne som er involvert i utvikling av en tjeneste, også på tvers av avdelinger og virksomheter ved behov",
+      "Bruke virksomhetens arbeidsmetodikk",
+      "Teste ut, dokumentere, vurdere og dele en ny form for arbeids- eller utviklingsmetode i løpet av læretiden, og dele den med teamet"
+    ]
+  },
+  {
+    "kompetansemål": 15,
+    "tittel": "Feilsøke kode og rette feil i algoritmer og kode",
+    "delmål": [
+      "Dokumentere bruke virksomhetens rutiner for feilsøking",
+      "Vurdere hvordan en går frem ved feilsøking og foreslå forbedringer",
+      "Dokumentere problemer med feilmeldinger, følge det opp og løse det",
+      "Ha kjennskap til og kunne bruke utvalgte programmer som feilsøker koden",
+      "Lage testscript",
+      "Rette kode til kollegaer",
+      "Forstå og bruke deployment pipeline",
+      "Feilsøke kode og dokumentere løsning"
+    ]
+  },
+  {
+    "kompetansemål": 16,
+    "tittel": "Utforske prosesser knyttet til testing og feilsøking i utvikling av løsninger",
+    "delmål": [
+      "Integrasjonstest",
+      "Delta i testing som involverer brukere",
+      "Gjennomføre kvalitets- og funksjonstester virksomheten benytter seg av",
+      "Torslag til tester: Akseptansetest, Integrasjonstest, brukertest internt og eksternt, prøve ut automatiseringsteknologi i forbindelse med feilsøk og testing, API eller Cron"
+    ]
+  },
+  {
+    "kompetansemål": 17,
+    "tittel": "Behandle bedriftsinterne opplysninger på en sikker og etisk forsvarlig måte",
+    "delmål": [
+      "Delta i arbeidet med å utarbeide en kravspesifikasjon",
+      "Bli satt inn i Identitetssystem for håndtering av tilganger til systemene",
+      "Forslag til lovverk og regler: Virksomhetens sikkerhets- og passordpolicy og designmanual, tilgangskontroll og identitetssystem for håndtering av tilganger til systemene"
+    ]
+  },
+  {
+    "kompetansemål": 18,
+    "tittel": "Utforske konseptene maskinlæring og kunstig intelligens",
+    "delmål": [
+      "Diskutere fremtidig behov for og konsekvenser av maskinlære og kunstig intelligens med kollegaer",
+      "Bruke algoritmer for å sammenstille tabeller og sette opp en database",
+      "Kartlegge om virksomheten bruker maskinlæring allerede",
+      "Avdekke om noen av løsningene virksomheten allerede bruker tilbyr maskinlæring, kartlegge, foreslå og begrunne anbefalinger til videreutvikling til bruk i virksomheten",
+      "Delta på kurs, faglunsj, seminar eller messer"
+    ]
+  },
+  {
+    "kompetansemål": 19,
+    "tittel": "Utforske og vurdere eksisterende og nye teknologier og bransjerelevante kodespråk",
+    "delmål": [
+      "Holde seg oppdatert på nye standarder, programmer og programmeringsspråk",
+      "Sammenlikne hva liknende virksomheter bruker av teknologi og kodespråk, og foreslå muligheter for virksomheten",
+      "Kartlegge og vurdere endringer i behovet til virksomhetens brukere og tilrettelegge for dette",
+      "Bruke skyspesifikke tjenester",
+      "Utforske, kartlegge og argumentere for om dette kan kan benyttes av virksomheten: Integrasjonsteknologi, VR og AR",
+      "Argumentere for hvorfor semantikk er viktig i IT-utviklerfaget"
+    ]
+  },
+  {
+    "kompetansemål": 20,
+    "tittel": "Reflektere over og beskrive hvordan teknologi kan misbrukes og påvirke samfunnet negativt",
+    "delmål": [
+      "Diskutere hvordan data og personopplysninger kan bidra til spredning av fake news",
+      "Skrive risikoanalyse, dokumentere og avdekke forsøk på svindel i virksomheten",
+      "Sette seg inn i, dokumentere og gjerne delta virksomhetens arbeid for å forhindre dataangrep på virksomheten",
+      "I starten av et prosjekt kan lærlingen delta i diskusjoner der fordeler og ulemper for brukeren diskuteres"
+    ]
+  },
+  {
+    "kompetansemål": 21,
+    "tittel": "Gjøre rede for hvilke krav og forventninger som stilles til et likeverdig og inkluderende yrkesfellesskap, og reflektere over hvilke plikter og rettigheter arbeidsgiver og arbeidstaker har i lærebedriften",
+    "delmål": [
+      "Delta i ombordstigningsprogram for nyansatte",
+      "Dokumentere hva et likeverdig og inkluderende yrkesfellskap betyr",
+      "Dokumentere hvordan et likeverdig og inkluderende yrkesfellesskap er ivaretatt på arbeidsplassen",
+      "Reflektere og dokumentere hvilke plikter og rettigheter arbeidsgiveren har",
+      "Bli kjent med egne rettigheter som lærling på www.okstat.no",
+      "Reflektere og dokumentere hvilke rettigheter og plikter arbeidstaker har",
+      "Kjenne til og bruke virksomhetens HMS-rutiner som er relevant i sitt arbeid, og dokumentere dette i utvalgte arbeidsoppgaver"
+    ]
+  }
+]

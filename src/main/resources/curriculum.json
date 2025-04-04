@@ -1,0 +1,253 @@
+[
+  {
+    "competenceGoal": 1,
+    "competenceGoalTitle": "Plan, develop and document solutions with built-in privacy and security",
+    "subGoals": [
+      "Planning: Explain how the development of a service relates to the company's strategy",
+      "Planning: Use different methods and tools in connection with planning a service",
+      "Planning: Suggest and justify idea and plan for development of a service",
+      "Development: Use standard for computer programs and rules for code language in the company",
+      "Development: Create and update database table",
+      "Development: Write code",
+      "Development: Use the company's version control",
+      "Development: Create integrations",
+      "Development: Create scripts",
+      "Testing: Use the company's procedures for user testing",
+      "Testing: Use different methods and tools in connection with user testing",
+      "Testing: Plan, justify and conduct user testing adapted to the service",
+      "Testing: Bug fixing and code review according to the company's procedures",
+      "Testing: Update database and make necessary changes when needed",
+      "Realization: Use the company's procedures for verification of service",
+      "Realization: Connect and integrate the service in professional and user environment",
+      "Realization: Collaboration with operations and project manager. See competence goal 14",
+      "Operations, maintenance and management: Collaboration with operations, project owner and contract manager.",
+      "Operations, maintenance and management: Investigate users' further needs. See competence goal 3.",
+      "Operations, maintenance and management: Continuous bug fixing and updating of database table",
+      "Entire process: Use the company's internal procedures",
+      "Entire process: Know and be able to use the company's tools and systems"
+    ]
+  },
+  {
+    "competenceGoal": 2,
+    "competenceGoalTitle": "Plan, develop and document solutions that are energy efficient and sustainable",
+    "subGoals": [
+      "Entire process: See sub-goals under competence goal 1",
+      "Explain what energy efficient and sustainable means in the development of a service",
+      "Suggest and justify relevant energy efficient and sustainable choices in the development of a service",
+      "Develop and integrate energy efficient and sustainable solutions in the service"
+    ]
+  },
+  {
+    "competenceGoal": 3,
+    "competenceGoalTitle": "Further develop a solution to meet users' needs",
+    "subGoals": [
+      "Investigate users' further needs as a knowledge base for further development of a service",
+      "Assess what can optimize the performance of the solution and suggest measures",
+      "Plan, implement and evaluate a user journey",
+      "Possibly update data processor agreement and requirements specification",
+      "In case of further development: See also sub-goals in competence goal 1"
+    ]
+  },
+  {
+    "competenceGoal": 4,
+    "competenceGoalTitle": "Plan, develop, set up and document systems for data collection, analysis and visualization",
+    "subGoals": [
+      "Use different formats for organizing and storing data",
+      "Use different tools for analysis and visualization of data",
+      "Test and use different programming languages for visualization of data"
+    ]
+  },
+  {
+    "competenceGoal": 5,
+    "competenceGoalTitle": "Plan, develop, set up and document integrations between different systems and databases",
+    "subGoals": [
+      "Plan and create a proposal for good structure in a database at the company",
+      "Facilitate and maintain enough memory space in the database",
+      "Use key performance indicators (KPIs) in their work",
+      "Make selections and justify choice of relevant data for a solution or service",
+      "Plan, set up and document integrations between different systems and databases",
+      "Use systems and databases that are available to the company"
+    ]
+  },
+  {
+    "competenceGoal": 6,
+    "competenceGoalTitle": "Develop and use documentation and guides",
+    "subGoals": [
+      "Use, collaborate and document in the company's version control",
+      "Read, navigate and use standard and guidance in the company's programs",
+      "Develop documentation and guides internally in the team, and for collaboration with, for example, the operations department",
+      "Develop guides for external users who will use solutions in the company",
+      "Stay updated on technical specifications",
+      "Document tasks, plans and projects",
+      "Find documentation and guides on the internet for reuse",
+      "Assess and justify which programs can be used to create documentation and guidance for different solutions",
+      "Document a script and explain it"
+    ]
+  },
+  {
+    "competenceGoal": 7,
+    "competenceGoalTitle": "Guide users in various tasks",
+    "subGoals": [
+      "Create and hold courses for external and internal users",
+      "Collaborate with operations on guides that users need for different solutions",
+      "Prepare technical specifications in an easy-to-understand way",
+      "Create FAQ list",
+      "Create a good layout for a guidance manual with the company's design profile. Preferably in collaboration with the communications department.",
+      "Create different forms of guidance and documentation material in user tests internally in the company"
+    ]
+  },
+  {
+    "competenceGoal": 8,
+    "competenceGoalTitle": "Handle login information in a secure and responsible manner",
+    "subGoals": [
+      "Become familiar with the company's security guidelines, and document how it is used in the work",
+      "Create and use consent forms in their work where necessary",
+      "Use the company's procedures and relevant legislation for collecting and storing personal information.",
+      "Know and be able to find GDPR and use it in the work",
+      "Reflect on and document consequences of breaches of GDPR",
+      "Suggestions: Identity and access management, Two-factor authentication, ID portal and different security levels, Single sign-on and integrate login via Azure AD"
+    ]
+  },
+  {
+    "competenceGoal": 9,
+    "competenceGoalTitle": "Develop and adapt user interfaces that meet requirements for universal design",
+    "subGoals": [
+      "Participate in the company's relevant frontend tasks",
+      "Know and quality assure the service against WCAG 2.0"
+    ]
+  },
+  {
+    "competenceGoal": 10,
+    "competenceGoalTitle": "Select and use relevant frameworks and modules for development",
+    "subGoals": [
+      "Explain the connection between different phases in a development process. This can be done in a project plan or visualized in a program.",
+      "Explore and use the company's programs, platforms and apps for development",
+      "Explore relevant programs, platforms and apps for development outside the company and suggest possible use of these internally in a project"
+    ]
+  },
+  {
+    "competenceGoal": 11,
+    "competenceGoalTitle": "Describe consequences of technical debt in solutions",
+    "subGoals": [
+      "Explain and document what technical debt is",
+      "When developing a solution: Assess whether the company can build further on an existing solution",
+      "Explain and document why reuse of data affects resources in the company",
+      "Explain and document common solution for users to avoid common debt",
+      "Explain, justify and document why reuse of data affects resources in the company, and how the company can save money on reuse",
+      "Explain and document why reuse of data affects resources in the company",
+      "Assess and document advantages and disadvantages of open source"
+    ]
+  },
+  {
+    "competenceGoal": 12,
+    "competenceGoalTitle": "Describe what requirements different solutions place on infrastructure, and what possibilities and limitations follow from the infrastructure",
+    "subGoals": [
+      "Create and document network diagram of the infrastructure",
+      "Document, test and suggest improvements to infrastructure to uncover possibilities and limitations",
+      "Document which infrastructure standards are used in the company",
+      "Explain what requirements for infrastructure have to solution based on the size of the structure in the company",
+      "Suggest and justify possible adaptations to solutions"
+    ]
+  },
+  {
+    "competenceGoal": 13,
+    "competenceGoalTitle": "Account for and apply current regulations for privacy, copyright and information security in own work",
+    "subGoals": [
+      "Know and use relevant legislation and internal policy in the work",
+      "Create and use consent forms in the work",
+      "Follow, use and suggest improvements to the company's procedures for safeguarding information security in a development process",
+      "Understand and use English-language texts and regulations that are outside the EEA",
+      "Tips for policy and regulations: Copyright Act, Data Protection Impact Assessment (DPIA), and confidentiality agreement"
+    ]
+  },
+  {
+    "competenceGoal": 14,
+    "competenceGoalTitle": "Use development strategies and collaborate with other developers",
+    "subGoals": [
+      "Participate in relevant meetings in the company",
+      "Collaborate with project owner and manager",
+      "Collaborate with internal and external parties involved in the development of a service, also across departments and companies when needed",
+      "Use the company's work methodology",
+      "Test, document, assess and share a new form of work or development method during the apprenticeship, and share it with the team"
+    ]
+  },
+  {
+    "competenceGoal": 15,
+    "competenceGoalTitle": "Debug code and fix errors in algorithms and code",
+    "subGoals": [
+      "Document use of the company's procedures for debugging",
+      "Assess how to proceed with debugging and suggest improvements",
+      "Document problems with error messages, follow up and solve them",
+      "Have knowledge of and be able to use selected programs that debug the code",
+      "Create test script",
+      "Fix code for colleagues",
+      "Understand and use deployment pipeline",
+      "Debug code and document solution"
+    ]
+  },
+  {
+    "competenceGoal": 16,
+    "competenceGoalTitle": "Explore processes related to testing and debugging in the development of solutions",
+    "subGoals": [
+      "Integration test",
+      "Participate in testing involving users",
+      "Conduct quality and functional tests used by the company",
+      "Suggestions for tests: Acceptance test, Integration test, user test internally and externally, try out automation technology in connection with debugging and testing, API or Cron"
+    ]
+  },
+  {
+    "competenceGoal": 17,
+    "competenceGoalTitle": "Handle company internal information in a secure and ethically responsible manner",
+    "subGoals": [
+      "Participate in the work of developing a requirements specification",
+      "Be introduced to Identity system for managing access to the systems",
+      "Suggestions for legislation and rules: The company's security and password policy and design manual, access control and identity system for managing access to the systems"
+    ]
+  },
+  {
+    "competenceGoal": 18,
+    "competenceGoalTitle": "Explore the concepts of machine learning and artificial intelligence",
+    "subGoals": [
+      "Discuss future needs for and consequences of machine learning and artificial intelligence with colleagues",
+      "Use algorithms to compile tables and set up a database",
+      "Map whether the company already uses machine learning",
+      "Discover if any of the solutions the company already uses offer machine learning, map, suggest and justify recommendations for further development for use in the company",
+      "Participate in courses, professional lunches, seminars or trade fairs"
+    ]
+  },
+  {
+    "competenceGoal": 19,
+    "competenceGoalTitle": "Explore and assess existing and new technologies and industry-relevant code languages",
+    "subGoals": [
+      "Stay updated on new standards, programs and programming languages",
+      "Compare what similar companies use of technology and code languages, and suggest possibilities for the company",
+      "Map and assess changes in the needs of the company's users and facilitate for this",
+      "Use cloud-specific services",
+      "Explore, map and argue for whether this can be used by the company: Integration technology, VR and AR",
+      "Argue why semantics is important in IT development"
+    ]
+  },
+  {
+    "competenceGoal": 20,
+    "competenceGoalTitle": "Reflect on and describe how technology can be misused and affect society negatively",
+    "subGoals": [
+      "Discuss how data and personal information can contribute to the spread of fake news",
+      "Write risk analysis, document and uncover attempts at fraud in the company",
+      "Familiarize with, document and preferably participate in the company's work to prevent cyber attacks on the company",
+      "At the start of a project, the apprentice can participate in discussions where advantages and disadvantages for the user are discussed"
+    ]
+  },
+  {
+    "competenceGoal": 21,
+    "competenceGoalTitle": "Account for what requirements and expectations are set for an equal and inclusive professional community, and reflect on what duties and rights employer and employee have in the training company",
+    "subGoals": [
+      "Participate in onboarding program for new employees",
+      "Document what an equal and inclusive professional community means",
+      "Document how an equal and inclusive professional community is maintained in the workplace",
+      "Reflect and document what duties and rights the employer has",
+      "Get to know your own rights as an apprentice at www.okstat.no",
+      "Reflect and document what rights and duties the employee has",
+      "Know and use the company's HSE procedures that are relevant in their work, and document this in selected tasks"
+    ]
+  }
+]
