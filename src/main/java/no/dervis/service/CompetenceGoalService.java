@@ -18,8 +18,8 @@ public class CompetenceGoalService {
 
     private final ObjectMapper objectMapper;
 
-    public CompetenceGoalService() {
-        this.objectMapper = new ObjectMapper();
+    public CompetenceGoalService(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     /**
