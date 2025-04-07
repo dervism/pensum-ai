@@ -23,7 +23,7 @@ public class App {
     // Configuration constants
     private static final String DEFAULT_LANGUAGE = "en";
     private static final String OLLAMA_ENDPOINT = "http://localhost:11434";
-    private static final String DEFAULT_OLLAMA_MODEL = "qwen2.5-coder:32b";
+    private static final String DEFAULT_OLLAMA_MODEL = "qwen2.5:32b";
     private static final GitHubModelsChatModelName DEFAULT_GITHUB_MODEL = GitHubModelsChatModelName.GPT_4_O_MINI;
 
     // Services

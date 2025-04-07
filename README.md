@@ -26,9 +26,9 @@ The application is configurable and supports:
 ### Setting up Ollama (Default Provider)
 
 1. Install Ollama from [https://ollama.ai/](https://ollama.ai/)
-2. Pull a supported model (default is qwen2.5-coder:32b):
+2. Pull a supported model (default is qwen2.5:32b):
 ```shell script
-ollama pull qwen2.5-coder:32b
+ollama pull qwen2.5:32b
 ```
 3. Ensure Ollama is running:
 ```shell script
