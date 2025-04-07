@@ -87,6 +87,8 @@
               <artifactId>maven-assembly-plugin</artifactId>
               <version>3.3.0</version>
               <configuration>
+                  <finalName>pensumai</finalName>
+                  <appendAssemblyId>false</appendAssemblyId>
                   <archive>
                       <manifest>
                           <mainClass>no.dervis.App</mainClass>
