@@ -1,5 +1,7 @@
 package no.dervis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.langchain4j.model.github.GitHubModelsChatModelName;
 import no.dervis.model.CompetenceGoal;
 import no.dervis.service.CompetenceGoalService;
 import no.dervis.service.LlmService;
@@ -21,15 +23,26 @@ public class App {
     public static void main(String[] args) {
         try {
             // Create services
-            CompetenceGoalService competenceGoalService = new CompetenceGoalService();
-            LlmService llmService = new LlmService();
+            LlmService ollamaLlm = new LlmService(
+                    new ObjectMapper(),
+                    "http://localhost:11434/api/generate",
+                    "qwen2.5-coder:32b");
+
+            LlmService ghLlm = new LlmService(
+                    new ObjectMapper(),
+                    GitHubModelsChatModelName.GPT_4_O_MINI);
+
+            LlmService llmService = ghLlm;
 
             // Load competence goals
             String language = args.length > 0 ? args[0] : DEFAULT_LANGUAGE;
-            List<CompetenceGoal> competenceGoals = loadCompetenceGoals(competenceGoalService, language);
+            List<CompetenceGoal> competenceGoals = loadCompetenceGoals(new CompetenceGoalService(), language);
 
             // Ask the developer about their tasks
-            String developerResponse = askDeveloper();
+            String developerResponse =  "I implemented a Java application and deployed it to Google Cloud"; //askDeveloper();
+
+            System.out.println("\nAsking the LLM:\n");
+            System.out.println(developerResponse);
 
             // Match the developer's response to competence goals
             List<CompetenceGoal> matchingGoals = llmService.matchCompetenceGoals(developerResponse, competenceGoals);

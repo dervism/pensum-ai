@@ -2,6 +2,9 @@
 
 A Java application that uses LangChain4j and Ollama with a local LLM model (qwen2.5-coder:32b) to match developer skills with competence goals.
 
+ghmodels:
+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
+
 ## Overview
 
 This application:

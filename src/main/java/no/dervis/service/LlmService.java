@@ -1,186 +1,271 @@
 package no.dervis.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.github.GitHubModelsChatModel;
+import dev.langchain4j.model.github.GitHubModelsChatModelName;
+import dev.langchain4j.model.ollama.OllamaChatModel;
 import no.dervis.model.CompetenceGoal;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static dev.langchain4j.model.github.GitHubModelsChatModelName.GPT_4_O_MINI;
 
 /**
- * Service for interacting with the LLM using direct HTTP requests to Ollama.
+ * Service for matching developer responses to competence goals using LLM.
+ * Supports both Ollama and GitHub Models as LLM providers.
  */
 public class LlmService {
-
-    private final HttpClient httpClient;
-    private final ObjectMapper objectMapper;
-    private final String ollamaEndpoint;
-    private final String modelName;
+    // Constants
+    private static final Pattern JSON_ARRAY_PATTERN = Pattern.compile("\\[.*\\]", Pattern.DOTALL);
+    private static final Pattern THINK_TAG_PATTERN = Pattern.compile("<think>.*?</think>", Pattern.DOTALL);
+    private static final Duration DEFAULT_TIMEOUT = Duration.ofMinutes(2);
+    public static final String GH_TOKEN = System.getenv("GH_TOKEN");
 
     /**
-     * Creates a new LlmService that connects to Ollama with the specified model.
+     * Enum defining available LLM provider types
      */
-    public LlmService() {
-        this.httpClient = HttpClient.newHttpClient();
-        this.objectMapper = new ObjectMapper();
-        this.ollamaEndpoint = "http://localhost:11434/api/generate";
-        this.modelName = "qwen2.5-coder:32b";
+    public enum LlmProvider {
+        OLLAMA,
+        GITHUB_MODELS
+    }
+
+    // Record for JSON deserialization
+    private record MatchResult(int competenceGoalId, List<String> matchingSubGoals) {}
+
+    // Service dependencies
+    private final ObjectMapper objectMapper;
+    private final String ollamaEndpoint;
+    private final String defaultOllamaModel;
+    private final GitHubModelsChatModelName defaultGithubModel;
+    private final LlmProvider defaultProvider;
+
+    /**
+     * Creates a new LlmService with Ollama as the default provider.
+     *
+     * @param objectMapper Jackson object mapper for JSON processing
+     * @param ollamaEndpoint URL endpoint for Ollama API
+     * @param defaultOllamaModel Default model name to use with Ollama
+     */
+    public LlmService(ObjectMapper objectMapper, String ollamaEndpoint, String defaultOllamaModel) {
+        this(objectMapper, ollamaEndpoint, defaultOllamaModel, GitHubModelsChatModelName.GPT_4_O_MINI, LlmProvider.OLLAMA);
     }
 
     /**
-     * Matches the developer's response to competence goals.
-     * 
-     * @param developerResponse The developer's description of their tasks
-     * @param competenceGoals The list of competence goals to match against
-     * @return A list of matching competence goals with their matching subgoals
+     * Creates a new LlmService with GitHub Models as the default provider.
+     *
+     * @param objectMapper Jackson object mapper for JSON processing
+     * @param defaultGithubModel Default GitHub model to use
      */
-    public List<CompetenceGoal> matchCompetenceGoals(String developerResponse, List<CompetenceGoal> competenceGoals) {
-        try {
-            // Create a prompt for the LLM
-            String prompt = createMatchingPrompt(developerResponse, competenceGoals);
+    public LlmService(ObjectMapper objectMapper, GitHubModelsChatModelName defaultGithubModel) {
+        this(objectMapper, null, null, defaultGithubModel, LlmProvider.GITHUB_MODELS);
+    }
 
-            // Get the response from the LLM
-            String response = generateResponse(prompt);
+    /**
+     * Creates a new LlmService with complete configuration.
+     *
+     * @param objectMapper Jackson object mapper for JSON processing
+     * @param ollamaEndpoint URL endpoint for Ollama API (can be null if not using Ollama)
+     * @param defaultOllamaModel Default model name for Ollama (can be null if not using Ollama)
+     * @param defaultGithubModel Default GitHub model (can be null if not using GitHub Models)
+     * @param defaultProvider The default LLM provider to use
+     */
+    public LlmService(
+            ObjectMapper objectMapper,
+            String ollamaEndpoint,
+            String defaultOllamaModel,
+            GitHubModelsChatModelName defaultGithubModel,
+            LlmProvider defaultProvider) {
 
-            // Parse the response to extract matching competence goals
-            return parseMatchingResponse(response, competenceGoals);
-        } catch (Exception e) {
-            System.err.println("Error matching competence goals: " + e.getMessage());
-            e.printStackTrace();
-            return new ArrayList<>();
+        this.objectMapper = Objects.requireNonNull(objectMapper, "ObjectMapper must not be null");
+        this.defaultProvider = Objects.requireNonNull(defaultProvider, "Default provider must not be null");
+
+        // Validate provider-specific parameters
+        if (defaultProvider == LlmProvider.OLLAMA) {
+            this.ollamaEndpoint = Objects.requireNonNull(ollamaEndpoint, "Ollama endpoint must not be null when using Ollama");
+            this.defaultOllamaModel = Objects.requireNonNull(defaultOllamaModel, "Default Ollama model must not be null when using Ollama");
+        } else {
+            this.ollamaEndpoint = ollamaEndpoint; // Can be null
+            this.defaultOllamaModel = defaultOllamaModel; // Can be null
+        }
+
+        if (defaultProvider == LlmProvider.GITHUB_MODELS) {
+            this.defaultGithubModel = Objects.requireNonNull(defaultGithubModel, "Default GitHub model must not be null when using GitHub Models");
+        } else {
+            this.defaultGithubModel = defaultGithubModel; // Can be null
         }
     }
 
     /**
-     * Sends a request to Ollama and gets the response.
+     * Matches developer's response to competence goals using the default LLM provider and model.
+     *
+     * @param developerResponse The developer's description of their tasks
+     * @param competenceGoals The list of competence goals to match against
+     * @return A list of matching competence goals with their matching subgoals
+     * @throws IOException If an I/O error occurs during LLM communication
+     * @throws InterruptedException If the operation is interrupted
      */
-    private String generateResponse(String prompt) throws IOException, InterruptedException {
-        // Create the request body
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", modelName);
-        requestBody.put("prompt", prompt);
-        requestBody.put("temperature", 0.1);
+    public List<CompetenceGoal> matchCompetenceGoals(String developerResponse, List<CompetenceGoal> competenceGoals)
+            throws IOException, InterruptedException {
 
-        // Convert the request body to JSON
-        String requestBodyJson = objectMapper.writeValueAsString(requestBody);
+        if (defaultProvider == LlmProvider.OLLAMA) {
+            return matchCompetenceGoalsWithOllama(developerResponse, competenceGoals, defaultOllamaModel);
+        } else {
+            return matchCompetenceGoalsWithGitHubModel(developerResponse, competenceGoals, defaultGithubModel);
+        }
+    }
 
-        // Create the HTTP request
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(ollamaEndpoint))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson))
+
+    /**
+     * Matches developer's response to competence goals using Ollama with the specified model.
+     *
+     * @param developerResponse The developer's description of their tasks
+     * @param competenceGoals The list of competence goals to match against
+     * @param modelName The Ollama model name to use
+     * @return A list of matching competence goals with their matching subgoals
+     * @throws IOException If an I/O error occurs during LLM communication
+     * @throws InterruptedException If the operation is interrupted
+     * @throws IllegalStateException If Ollama is not properly configured
+     */
+    public List<CompetenceGoal> matchCompetenceGoalsWithOllama(
+            String developerResponse,
+            List<CompetenceGoal> competenceGoals,
+            String modelName) throws IOException, InterruptedException {
+
+        if (ollamaEndpoint == null) {
+            throw new IllegalStateException("Ollama endpoint is not configured");
+        }
+
+        String prompt = createMatchingPrompt(developerResponse, competenceGoals);
+        String llmResponse = generateOllamaResponse(prompt, modelName);
+        return parseMatchingResponse(llmResponse, competenceGoals);
+    }
+
+    /**
+     * Matches developer's response to competence goals using a GitHub model.
+     *
+     * @param developerResponse The developer's description of their tasks
+     * @param competenceGoals The list of competence goals to match against
+     * @param githubModel The GitHub model to use
+     * @return A list of matching competence goals with their matching subgoals
+     * @throws IOException If an I/O error occurs during LLM communication
+     * @throws InterruptedException If the operation is interrupted
+     */
+    public List<CompetenceGoal> matchCompetenceGoalsWithGitHubModel(
+            String developerResponse,
+            List<CompetenceGoal> competenceGoals,
+            GitHubModelsChatModelName githubModel) throws IOException, InterruptedException {
+
+        String prompt = createMatchingPrompt(developerResponse, competenceGoals);
+        String llmResponse = generateGitHubModelResponse(prompt, githubModel);
+        return parseMatchingResponse(llmResponse, competenceGoals);
+    }
+
+    /**
+     * Generates a response using Ollama model.
+     */
+    private String generateOllamaResponse(String prompt, String modelName) {
+        ChatLanguageModel model = OllamaChatModel.builder()
+                .baseUrl(ollamaEndpoint)
+                .modelName(modelName)
+                .timeout(DEFAULT_TIMEOUT)
                 .build();
 
-        // Send the request and get the response
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        return model.chat(prompt);
+    }
 
-        // Parse the response to extract the generated text
-        Map<String, Object> responseMap = objectMapper.readValue(response.body(), Map.class);
-        return (String) responseMap.get("response");
+    /**
+     * Generates a response using GitHub Models.
+     */
+    private String generateGitHubModelResponse(String prompt, GitHubModelsChatModelName githubModel) {
+        GitHubModelsChatModel model = GitHubModelsChatModel.builder()
+                .gitHubToken(GH_TOKEN)
+                .modelName(githubModel)
+                .logRequestsAndResponses(false)
+                .build();
+
+        return model.chat(prompt);
     }
 
     /**
      * Creates a prompt for the LLM to match developer response to competence goals.
      */
     private String createMatchingPrompt(String developerResponse, List<CompetenceGoal> competenceGoals) {
-        StringBuilder prompt = new StringBuilder();
-        prompt.append("I'm going to provide you with a developer's description of their tasks and a list of competence goals with subgoals. ");
-        prompt.append("Your task is to identify which competence goals and specific subgoals match the skills demonstrated in the developer's description. ");
-        prompt.append("Please respond with a JSON array of objects, where each object contains 'competenceGoalId', 'competenceGoalTitle', and 'matchingSubGoals' (an array of matching subgoal strings). ");
-        prompt.append("Only include competence goals that have at least one matching subgoal.\n\n");
+        try {
+            String goalsJson = objectMapper.writeValueAsString(competenceGoals);
 
-        prompt.append("Developer's description:\n").append(developerResponse).append("\n\n");
-
-        prompt.append("Competence Goals:\n");
-        for (CompetenceGoal goal : competenceGoals) {
-            prompt.append("ID: ").append(goal.getId()).append("\n");
-            prompt.append("Title: ").append(goal.getTitle()).append("\n");
-            prompt.append("Subgoals:\n");
-            for (String subgoal : goal.getSubGoals()) {
-                prompt.append("- ").append(subgoal).append("\n");
-            }
-            prompt.append("\n");
+            return String.format("""
+                You are an AI assistant that helps match developer responses to competence goals.
+                
+                COMPETENCE GOALS:
+                %s
+                
+                DEVELOPER RESPONSE:
+                %s
+                
+                <think>
+                Analyze the developer's response and identify which competence goals it matches.
+                For each matching goal, identify which specific subgoals are matched.
+                </think>
+                
+                Return a JSON array of matching competence goals in this format:
+                [
+                  {
+                    "competenceGoalId": 123,
+                    "matchingSubGoals": ["subgoal1", "subgoal2"]
+                  }
+                ]
+                Only include goals where there is a clear match to the developer's response.
+                """, goalsJson, developerResponse);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Failed to serialize competence goals", e);
         }
-
-        prompt.append("Please analyze the developer's description and identify matching competence goals and subgoals. ");
-        prompt.append("Return your response as a JSON array in the format described above.");
-
-        return prompt.toString();
     }
 
     /**
      * Parses the LLM response to extract matching competence goals.
      */
     private List<CompetenceGoal> parseMatchingResponse(String llmResponse, List<CompetenceGoal> allGoals) {
-        List<CompetenceGoal> matchingGoals = new ArrayList<>();
-
         try {
-            // Try to parse the response as JSON
-            if (llmResponse.contains("[") && llmResponse.contains("]")) {
-                // Extract the JSON array from the response
-                String jsonStr = llmResponse.substring(
-                        llmResponse.indexOf("["),
-                        llmResponse.lastIndexOf("]") + 1
-                );
+            // Remove thinking sections and extract JSON array
+            String cleanedResponse = THINK_TAG_PATTERN.matcher(llmResponse).replaceAll("");
+            Matcher jsonMatcher = JSON_ARRAY_PATTERN.matcher(cleanedResponse);
 
-                // Parse the JSON array
-                List<Map<String, Object>> matches = objectMapper.readValue(
-                        jsonStr,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, Map.class)
-                );
-
-                // Process each matching goal
-                for (Map<String, Object> match : matches) {
-                    // Extract the competence goal ID
-                    int goalId;
-                    if (match.containsKey("competenceGoalId")) {
-                        goalId = ((Number) match.get("competenceGoalId")).intValue();
-                    } else {
-                        continue; // Skip if no ID is provided
-                    }
-
-                    // Find the corresponding goal in allGoals
-                    CompetenceGoal originalGoal = allGoals.stream()
-                            .filter(g -> g.getId() == goalId)
-                            .findFirst()
-                            .orElse(null);
-
-                    if (originalGoal == null) {
-                        continue; // Skip if the goal is not found
-                    }
-
-                    // Extract the matching subgoals
-                    List<String> matchingSubGoals;
-                    if (match.containsKey("matchingSubGoals")) {
-                        matchingSubGoals = (List<String>) match.get("matchingSubGoals");
-                    } else {
-                        matchingSubGoals = new ArrayList<>();
-                    }
-
-                    // Create a new CompetenceGoal with only the matching subgoals
-                    CompetenceGoal matchingGoal = new CompetenceGoal(
-                            originalGoal.getId(),
-                            originalGoal.getTitle(),
-                            matchingSubGoals
-                    );
-
-                    matchingGoals.add(matchingGoal);
-                }
+            if (!jsonMatcher.find()) {
+                return List.of();
             }
+
+            // Create lookup map for competence goals
+            Map<Integer, CompetenceGoal> goalMap = allGoals.stream()
+                    .collect(Collectors.toMap(CompetenceGoal::getId, goal -> goal));
+
+            // Parse and transform results
+            return objectMapper.readValue(jsonMatcher.group(),
+                            new TypeReference<List<MatchResult>>() {})
+                    .stream()
+                    .filter(match -> goalMap.containsKey(match.competenceGoalId))
+                    .map(match -> {
+                        CompetenceGoal original = goalMap.get(match.competenceGoalId);
+                        return new CompetenceGoal(
+                                original.getId(),
+                                original.getTitle(),
+                                match.matchingSubGoals != null ? match.matchingSubGoals : List.of()
+                        );
+                    })
+                    .toList();
+
         } catch (Exception e) {
             System.err.println("Error parsing LLM response: " + e.getMessage());
-            e.printStackTrace();
-
-            // Fallback: Return all goals if parsing fails
-            return new ArrayList<>(allGoals);
+            return List.of();
         }
-
-        return matchingGoals;
     }
 }
