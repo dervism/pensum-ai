@@ -54,7 +54,7 @@ mvn clean package
 ### Basic Usage
 
 ```shell script
-# Run with default settings (English, Ollama provider, qwen2.5-coder:32b model)
+# Run with default settings (English, Ollama provider, qwen2.5:32b:32b model)
 java -jar target/pensumai.jar
 ```
 
@@ -83,7 +83,7 @@ java -jar target/pensumai.jar --help
 |--------|-------|-------------|---------|
 | `--language <code>` | `-l` | Language code for competence goals | `en` |
 | `--provider <provider>` | `-p` | LLM provider (OLLAMA or GITHUB_MODELS) | `OLLAMA` |
-| `--ollama-model <model>` | `-om` | Ollama model to use | `qwen2.5-coder:32b` |
+| `--ollama-model <model>` | `-om` | Ollama model to use | `qwen2.5:32b:32b` |
 | `--github-model <model>` | `-gm` | GitHub model to use | `GPT_4_O_MINI` |
 | `--help` | `-h` | Show help message | |
 
@@ -143,7 +143,7 @@ Matching subgoals:
 
 ### Ollama
 - Free, locally-hosted models for privacy and no API costs
-- Supports various models like llama3, qwen2.5-coder, mistral, etc.
+- Supports various models like llama3, qwen2.5:32b, mistral, etc.
 - Requires local setup and model downloads
 
 ### GitHub Models API
