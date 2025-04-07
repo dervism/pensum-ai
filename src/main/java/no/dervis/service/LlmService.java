@@ -18,8 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static dev.langchain4j.model.github.GitHubModelsChatModelName.GPT_4_O_MINI;
-
 /**
  * Service for matching developer responses to competence goals using LLM.
  * Supports both Ollama and GitHub Models as LLM providers.
