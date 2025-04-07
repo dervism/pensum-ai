@@ -1,97 +1,160 @@
-# Competence Goal Matcher
+# PensumAI - Competence Goal Matcher
 
-A Java application that uses LangChain4j and Ollama with a local LLM model (qwen2.5-coder:32b) to match developer skills with competence goals.
-
-ghmodels:
-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
+A Java application that matches developer skills with competence goals using Large Language Models (LLMs). This tool helps developers identify which competence goals they meet based on their work descriptions.
 
 ## Overview
 
-This application:
-1. Reads competence goals and subgoals from a JSON file
-2. Asks a developer to describe their recent tasks and skills
-3. Uses a local LLM (qwen2.5-coder:32b) to match the developer's skills with competence goals
-4. Displays the matching competence goals and subgoals
+The Competence Goal Matcher:
+1. Loads competence goals and subgoals from JSON files
+2. Prompts developers to describe their recent tasks and skills
+3. Uses LLM technology to analyze and match the developer's skills with relevant competence goals
+4. Displays matching competence goals and specific subgoals that align with the developer's experience
 
-The application supports both English and Norwegian competence goals, using the files `curriculum.json` and `pensum.json` respectively.
+The application is configurable and supports:
+- Multiple languages (English and Norwegian)
+- Different LLM providers (Ollama and GitHub Models)
+- Various LLM models for different quality/performance needs
 
 ## Prerequisites
 
-- Java 23 or later
-- Maven
-- [Ollama](https://ollama.ai/) installed and running locally
-- The qwen2.5-coder:32b model pulled in Ollama
+- Java 23 or higher
+- Maven for building
+- One of the following LLM providers:
+   - **Ollama** (default): For local, private model hosting
+   - **GitHub Models API**: For cloud-based model access
 
-### Setting up Ollama
+### Setting up Ollama (Default Provider)
 
 1. Install Ollama from [https://ollama.ai/](https://ollama.ai/)
-2. Pull the qwen2.5-coder:32b model:
-   ```
-   ollama pull qwen2.5-coder:32b
-   ```
+2. Pull a supported model (default is qwen2.5-coder:32b):
+```shell script
+ollama pull qwen2.5-coder:32b
+```
 3. Ensure Ollama is running:
-   ```
-   ollama serve
-   ```
+```shell script
+ollama serve
+```
+
+### Setting up GitHub Models API (Alternative)
+
+1. Create a GitHub Personal Access Token with appropriate permissions
+2. Export the token as an environment variable:
+```shell script
+export GH_TOKEN=your_github_token_here
+```
 
 ## Building the Application
 
-```bash
+```shell script
 mvn clean package
 ```
 
 ## Running the Application
 
-```bash
-# Run with English competence goals (default)
+### Basic Usage
+
+```shell script
+# Run with default settings (English, Ollama provider, qwen2.5-coder:32b model)
 java -jar target/pensumai.jar
+```
 
+### Advanced Options
+
+```shell script
 # Run with Norwegian competence goals
-java -jar target/pensumai.jar no
+java -jar target/pensumai.jar --language no
+
+# Use GitHub Models as provider
+java -jar target/pensumai.jar --provider GITHUB_MODELS
+
+# Use a specific Ollama model
+java -jar target/pensumai.jar --ollama-model llama3
+
+# Use a specific GitHub model
+java -jar target/pensumai.jar --provider GITHUB_MODELS --github-model GPT_4_O_MINI
+
+# Display help
+java -jar target/pensumai.jar --help
 ```
 
-## Usage
+### Command Line Options
 
-1. Run the application
-2. The application will load the competence goals from the JSON file
-3. You will be prompted to describe your recent tasks and skills
-4. Type your response and press Enter twice when you're done
-5. The application will use the LLM to match your skills with competence goals
-6. The matching competence goals and subgoals will be displayed
+| Option | Short | Description | Default |
+|--------|-------|-------------|---------|
+| `--language <code>` | `-l` | Language code for competence goals | `en` |
+| `--provider <provider>` | `-p` | LLM provider (OLLAMA or GITHUB_MODELS) | `OLLAMA` |
+| `--ollama-model <model>` | `-om` | Ollama model to use | `qwen2.5-coder:32b` |
+| `--github-model <model>` | `-gm` | GitHub model to use | `GPT_4_O_MINI` |
+| `--help` | `-h` | Show help message | |
 
-## Example
+## Interactive Usage
+
+1. Launch the application with your preferred options
+2. The application will load competence goals from the appropriate JSON file
+3. You'll be prompted to describe your recent tasks and skills
+4. Type your response and enter `done` on a new line when finished
+5. The application will analyze your input and match it with competence goals
+6. Matching goals and specific subgoals will be displayed
+
+## Example Session
 
 ```
-Loading competence goals...
 Loaded 21 competence goals.
 
-Please describe the tasks you have been working on recently.
-Be specific about the technologies, methodologies, and skills you've used.
-Type your response and press Enter twice when you're done:
-I've been working on a Java application that uses Spring Boot and MongoDB. I've implemented RESTful APIs, written unit tests with JUnit, and used Git for version control. I've also been working on improving the application's security by implementing authentication and authorization with Spring Security.
+Please describe the tasks you performed in your recent work:
+(Type your response and press Enter, then type 'done' on a new line to finish)
+I've been developing a Java Spring Boot application with RESTful APIs. 
+I implemented secure authentication using JWT and OAuth2.
+I've written unit tests with JUnit and performed code reviews.
+We use Git for version control and GitHub Actions for CI/CD.
+done
+
+Matching your response to competence goals...
 
 Matching Competence Goals:
 ==========================
 
-Competence Goal 1: Plan, develop and document solutions with built-in privacy and security
-Matching Subgoals:
-  - Development: Write code
-  - Development: Use the company's version control
-  - Testing: Bug fixing and code review according to the company's procedures
+Goal 1: Plan, develop and document solutions with built-in privacy and security
+Matching subgoals:
+  • Implement security measures in application code
+  • Use version control systems effectively
+  • Document development processes and security considerations
 
-Competence Goal 8: Handle login information in a secure and responsible manner
-Matching Subgoals:
-  - Create and use consent forms in their work where necessary
-  - Use the company's procedures and relevant legislation for collecting and storing personal information.
+Goal 7: Write maintainable and testable code
+Matching subgoals:
+  • Apply test-driven development principles
+  • Conduct code reviews to ensure quality
+  • Create automated tests for application components
 ```
 
 ## Project Structure
 
-- `src/main/java/no/dervis/model/`: Contains the model classes for competence goals
-- `src/main/java/no/dervis/service/`: Contains the service classes for loading competence goals and interacting with the LLM
-- `src/main/java/no/dervis/App.java`: The main application class
-- `src/main/resources/`: Contains the JSON files with competence goals
+- `src/main/java/no/dervis/`
+   - `model/`: Data models for competence goals
+   - `service/`:
+      - `CompetenceGoalService.java`: Loads and manages competence goals
+      - `LlmService.java`: Interfaces with LLM providers for matching
+   - `App.java`: Main application class with UI logic
+- `src/main/resources/`:
+   - JSON files containing competence goals in different languages
+   - LLM prompt templates
+
+## Supported LLM Providers
+
+### Ollama
+- Free, locally-hosted models for privacy and no API costs
+- Supports various models like llama3, qwen2.5-coder, mistral, etc.
+- Requires local setup and model downloads
+
+### GitHub Models API
+- Cloud-based, high-quality models
+- Requires GitHub authentication and API token
+- Supports models like GPT_4_O_MINI, CLAUDE_3_5_SONNET, and others
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
