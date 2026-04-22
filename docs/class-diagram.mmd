@@ -1,0 +1,134 @@
+classDiagram
+    %% ===== Model =====
+    class CompetenceGoal {
+        -int id
+        -String title
+        -List~String~ subGoals
+        +CompetenceGoal()
+        +CompetenceGoal(int, String, List~String~)
+        +getId() int
+        +setId(int)
+        +getTitle() String
+        +setTitle(String)
+        +getSubGoals() List~String~
+        +setSubGoals(List~String~)
+        +toString() String
+    }
+
+    class EnglishCompetenceGoal {
+        +setId(int)
+        +setTitle(String)
+        +setSubGoals(List~String~)
+    }
+
+    class NorwegianCompetenceGoal {
+        +setId(int)
+        +setTitle(String)
+        +setSubGoals(List~String~)
+    }
+
+    CompetenceGoal <|-- EnglishCompetenceGoal
+    CompetenceGoal <|-- NorwegianCompetenceGoal
+
+    %% ===== Services =====
+    class CompetenceGoalService {
+        -ObjectMapper objectMapper
+        +CompetenceGoalService(ObjectMapper)
+        +loadEnglishCompetenceGoals() List~CompetenceGoal~
+        +loadNorwegianCompetenceGoals() List~CompetenceGoal~
+        +loadCompetenceGoals(String language) List~CompetenceGoal~
+    }
+
+    class LlmService {
+        -ObjectMapper objectMapper
+        -String ollamaEndpoint
+        -String defaultOllamaModel
+        -GitHubModelsChatModelName defaultGithubModel
+        -LlmProvider defaultProvider
+        +LlmService(ObjectMapper, String, String)
+        +LlmService(ObjectMapper, GitHubModelsChatModelName)
+        +LlmService(ObjectMapper, String, String, GitHubModelsChatModelName, LlmProvider)
+        +matchCompetenceGoals(String, List~CompetenceGoal~) List~CompetenceGoal~
+        +matchCompetenceGoalsWithOllama(String, List~CompetenceGoal~, String) List~CompetenceGoal~
+        +matchCompetenceGoalsWithGitHubModel(String, List~CompetenceGoal~, GitHubModelsChatModelName) List~CompetenceGoal~
+        -generateOllamaResponse(String, String) String
+        -generateGitHubModelResponse(String, GitHubModelsChatModelName) String
+        -createMatchingPrompt(String, List~CompetenceGoal~) String
+        -parseMatchingResponse(String, List~CompetenceGoal~) List~CompetenceGoal~
+    }
+
+    class LlmProvider {
+        <<enumeration>>
+        OLLAMA
+        GITHUB_MODELS
+    }
+
+    class MatchResult {
+        <<record>>
+        +int competenceGoalId
+        +List~String~ matchingSubGoals
+    }
+
+    LlmService --> LlmProvider : uses
+
+    %% ===== Application =====
+    class App {
+        -CompetenceGoalService competenceGoalService
+        -LlmService llmService
+        -BufferedReader inputReader
+        +App(CompetenceGoalService, LlmService, BufferedReader)
+        +main(String[])$
+        +run(String language)
+        -loadCompetenceGoals(String) List~CompetenceGoal~
+        -askDeveloper() String
+        -displayMatchingGoals(List~CompetenceGoal~)
+        -createLlmService(ObjectMapper, CommandLineOptions)$ LlmService
+        -parseCommandLineArgs(String[])$ CommandLineOptions
+        -printHelp()$
+    }
+
+    class CommandLineOptions {
+        <<record>>
+        +String language
+        +LlmProvider provider
+        +Optional~String~ ollamaModel
+        +Optional~GitHubModelsChatModelName~ githubModel
+    }
+
+    class GHModels {
+        +main(String[])$
+    }
+
+    %% ===== External =====
+    class OllamaChatModel {
+        <<external>>
+    }
+    class GitHubModelsChatModel {
+        <<external>>
+    }
+    class GitHubModelsChatModelName {
+        <<external enum>>
+    }
+    class ObjectMapper {
+        <<external>>
+    }
+
+    %% ===== Associations =====
+    App --> CompetenceGoalService : uses
+    App --> LlmService : uses
+    App ..> CompetenceGoal : uses
+    App ..> CommandLineOptions : uses
+
+    CompetenceGoalService ..> CompetenceGoal : returns
+    CompetenceGoalService ..> EnglishCompetenceGoal : deserializes
+    CompetenceGoalService ..> NorwegianCompetenceGoal : deserializes
+    CompetenceGoalService --> ObjectMapper
+
+    LlmService ..> CompetenceGoal : matches
+    LlmService ..> MatchResult : uses
+    LlmService --> ObjectMapper
+    LlmService ..> OllamaChatModel : builds
+    LlmService ..> GitHubModelsChatModel : builds
+    LlmService --> GitHubModelsChatModelName
+
+    GHModels ..> GitHubModelsChatModel : builds
