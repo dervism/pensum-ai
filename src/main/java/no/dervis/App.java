@@ -1,7 +1,6 @@
 package no.dervis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.langchain4j.model.github.GitHubModelsChatModelName;
 import no.dervis.copilot.CopilotDeviceFlow;
 import no.dervis.copilot.CopilotTokenService;
 import no.dervis.model.CompetenceGoal;
@@ -26,7 +25,7 @@ public class App {
     private static final String DEFAULT_LANGUAGE = "en";
     private static final String OLLAMA_ENDPOINT = "http://localhost:11434";
     private static final String DEFAULT_OLLAMA_MODEL = "qwen2.5:32b";
-    private static final GitHubModelsChatModelName DEFAULT_GITHUB_MODEL = GitHubModelsChatModelName.GPT_4_O_MINI;
+    private static final String DEFAULT_GITHUB_MODEL = "gpt-4o-mini";
     private static final String DEFAULT_COPILOT_MODEL = "claude-opus-4.7";
 
     // Services
@@ -189,7 +188,7 @@ public class App {
         String language = DEFAULT_LANGUAGE;
         LlmProvider provider = LlmProvider.GITHUB_MODELS;
         Optional<String> ollamaModel = Optional.empty();
-        Optional<GitHubModelsChatModelName> githubModel = Optional.empty();
+        Optional<String> githubModel = Optional.empty();
         Optional<String> copilotModel = Optional.empty();
 
         for (int i = 0; i < args.length; i++) {
@@ -217,12 +216,7 @@ public class App {
                 }
                 case "--github-model", "-gm" -> {
                     if (i + 1 < args.length) {
-                        try {
-                            githubModel = Optional.of(GitHubModelsChatModelName.valueOf(args[++i]));
-                        } catch (IllegalArgumentException e) {
-                            System.err.println("Invalid GitHub model: " + args[i]);
-                            System.err.println("Using default model: " + DEFAULT_GITHUB_MODEL);
-                        }
+                        githubModel = Optional.of(args[++i]);
                     }
                 }
                 case "--copilot-model", "-cm" -> {
@@ -264,7 +258,7 @@ public class App {
               -p,  --provider <provider>   LLM provider: OLLAMA, GITHUB_MODELS, GITHUB_COPILOT
                                             (default: GITHUB_MODELS)
               -om, --ollama-model <model>  Ollama model to use (default: qwen2.5:32b)
-              -gm, --github-model <model>  GitHub Models model (default: GPT_4_O_MINI)
+              -gm, --github-model <model>  GitHub Models model (default: gpt-4o-mini)
               -cm, --copilot-model <model> Copilot model id (default: claude-opus-4.7)
                    --copilot-logout        Clear the cached GitHub OAuth token
               -h,  --help                  Show this help message
@@ -283,7 +277,7 @@ public class App {
             String language,
             LlmProvider provider,
             Optional<String> ollamaModel,
-            Optional<GitHubModelsChatModelName> githubModel,
+            Optional<String> githubModel,
             Optional<String> copilotModel
     ) {}
 }

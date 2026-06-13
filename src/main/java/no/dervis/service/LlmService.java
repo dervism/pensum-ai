@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.github.GitHubModelsChatModel;
-import dev.langchain4j.model.github.GitHubModelsChatModelName;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import no.dervis.copilot.CopilotTokenService;
@@ -47,7 +45,7 @@ public class LlmService {
     private final ObjectMapper objectMapper;
     private final String ollamaEndpoint;
     private final String defaultOllamaModel;
-    private final GitHubModelsChatModelName defaultGithubModel;
+    private final String defaultGithubModel;
     private final LlmProvider defaultProvider;
     private final CopilotTokenService copilotTokenService;
     private final String defaultCopilotModel;
@@ -60,7 +58,7 @@ public class LlmService {
      * @param defaultOllamaModel Default model name to use with Ollama
      */
     public LlmService(ObjectMapper objectMapper, String ollamaEndpoint, String defaultOllamaModel) {
-        this(objectMapper, ollamaEndpoint, defaultOllamaModel, GitHubModelsChatModelName.GPT_4_O_MINI,
+        this(objectMapper, ollamaEndpoint, defaultOllamaModel, "gpt-4o-mini",
                 null, null, LlmProvider.OLLAMA);
     }
 
@@ -70,7 +68,7 @@ public class LlmService {
      * @param objectMapper Jackson object mapper for JSON processing
      * @param defaultGithubModel Default GitHub model to use
      */
-    public LlmService(ObjectMapper objectMapper, GitHubModelsChatModelName defaultGithubModel) {
+    public LlmService(ObjectMapper objectMapper, String defaultGithubModel) {
         this(objectMapper, null, null, defaultGithubModel, null, null, LlmProvider.GITHUB_MODELS);
     }
 
@@ -97,7 +95,7 @@ public class LlmService {
             ObjectMapper objectMapper,
             String ollamaEndpoint,
             String defaultOllamaModel,
-            GitHubModelsChatModelName defaultGithubModel,
+            String defaultGithubModel,
             CopilotTokenService copilotTokenService,
             String defaultCopilotModel,
             LlmProvider defaultProvider) {
@@ -180,7 +178,7 @@ public class LlmService {
     public List<CompetenceGoal> matchCompetenceGoalsWithGitHubModel(
             String developerResponse,
             List<CompetenceGoal> competenceGoals,
-            GitHubModelsChatModelName githubModel) throws IOException, InterruptedException {
+            String githubModel) throws IOException, InterruptedException {
 
         String prompt = createMatchingPrompt(developerResponse, competenceGoals);
         String llmResponse = generateGitHubModelResponse(prompt, githubModel);
@@ -221,13 +219,16 @@ public class LlmService {
     }
 
     /**
-     * Generates a response using GitHub Models.
+     * Generates a response using GitHub Models via their OpenAI-compatible inference endpoint.
      */
-    private String generateGitHubModelResponse(String prompt, GitHubModelsChatModelName githubModel) {
-        GitHubModelsChatModel model = GitHubModelsChatModel.builder()
-                .gitHubToken(GH_TOKEN)
+    private String generateGitHubModelResponse(String prompt, String githubModel) {
+        OpenAiChatModel model = OpenAiChatModel.builder()
+                .baseUrl("https://models.inference.ai.azure.com")
+                .apiKey(GH_TOKEN)
                 .modelName(githubModel)
-                .logRequestsAndResponses(false)
+                .timeout(DEFAULT_TIMEOUT)
+                .logRequests(false)
+                .logResponses(false)
                 .build();
 
         return model.chat(prompt);

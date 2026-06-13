@@ -26,12 +26,6 @@
     <!-- LangChain4j Core -->
       <dependency>
           <groupId>dev.langchain4j</groupId>
-          <artifactId>langchain4j-github-models</artifactId>
-          <version>1.16.2-beta26</version>
-      </dependency>
-
-      <dependency>
-          <groupId>dev.langchain4j</groupId>
           <artifactId>langchain4j</artifactId>
           <version>1.16.2</version>
       </dependency>
