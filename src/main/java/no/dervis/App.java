@@ -25,7 +25,7 @@ public class App {
     private static final String DEFAULT_LANGUAGE = "en";
     private static final String OLLAMA_ENDPOINT = "http://localhost:11434";
     private static final String DEFAULT_OLLAMA_MODEL = "qwen2.5:32b";
-    private static final String DEFAULT_GITHUB_MODEL = "gpt-4o-mini";
+    private static final String DEFAULT_GITHUB_MODEL = "gpt-5";
     private static final String DEFAULT_COPILOT_MODEL = "claude-opus-4.7";
 
     // Services
@@ -258,7 +258,7 @@ public class App {
               -p,  --provider <provider>   LLM provider: OLLAMA, GITHUB_MODELS, GITHUB_COPILOT
                                             (default: GITHUB_MODELS)
               -om, --ollama-model <model>  Ollama model to use (default: qwen2.5:32b)
-              -gm, --github-model <model>  GitHub Models model (default: gpt-4o-mini)
+              -gm, --github-model <model>  GitHub Models model (default: gpt-5)
               -cm, --copilot-model <model> Copilot model id (default: claude-opus-4.7)
                    --copilot-logout        Clear the cached GitHub OAuth token
               -h,  --help                  Show this help message
