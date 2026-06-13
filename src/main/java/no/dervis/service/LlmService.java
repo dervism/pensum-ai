@@ -57,8 +57,8 @@ public class LlmService {
      * @param ollamaEndpoint URL endpoint for Ollama API
      * @param defaultOllamaModel Default model name to use with Ollama
      */
-    public LlmService(ObjectMapper objectMapper, String ollamaEndpoint, String defaultOllamaModel) {
-        this(objectMapper, ollamaEndpoint, defaultOllamaModel, "gpt-4o-mini",
+    public LlmService(ObjectMapper objectMapper, String ollamaEndpoint, String defaultOllamaModel, String defaultGithubModel) {
+        this(objectMapper, ollamaEndpoint, defaultOllamaModel, defaultGithubModel,
                 null, null, LlmProvider.OLLAMA);
     }
 

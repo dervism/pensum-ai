@@ -167,7 +167,7 @@ public class App {
      */
     private static LlmService createLlmService(ObjectMapper objectMapper, CommandLineOptions options) {
         return switch (options.provider()) {
-            case OLLAMA -> new LlmService(objectMapper, OLLAMA_ENDPOINT, options.ollamaModel().orElse(DEFAULT_OLLAMA_MODEL));
+            case OLLAMA -> new LlmService(objectMapper, OLLAMA_ENDPOINT, options.ollamaModel().orElse(DEFAULT_OLLAMA_MODEL), options.copilotModel().orElse(DEFAULT_COPILOT_MODEL));
             case GITHUB_MODELS -> new LlmService(objectMapper, options.githubModel().orElse(DEFAULT_GITHUB_MODEL));
             case GITHUB_COPILOT -> {
                 CopilotDeviceFlow deviceFlow = new CopilotDeviceFlow(objectMapper);
