@@ -49,7 +49,7 @@ public class App {
     /**
      * Main entry point of the application.
      */
-    public static void main(String[] args) {
+    static void main(String[] args) {
         try {
             // Parse command line arguments
             CommandLineOptions options = parseCommandLineArgs(args);
