@@ -1,8 +1,8 @@
 # PensumAI - Competence Goal Matcher
 
-The application allows IT-utviklerfaget students to 
+A Java application that allows IT-utviklerfaget students to identify competence goal elements from the curriculum using a description of a task they have completed.
 
-A Java application that matches developer skills with competence goals using Large Language Models (LLMs). This tool helps developers identify which competence goals they meet based on their work descriptions. PS: The application works best when it is run with GitHub Models.
+PS: The application works best when it is run with GitHub Models.
 
 ## Overview
 
