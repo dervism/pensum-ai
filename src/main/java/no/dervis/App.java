@@ -26,7 +26,7 @@ public class App {
     private static final String OLLAMA_ENDPOINT = "http://localhost:11434";
     private static final String DEFAULT_OLLAMA_MODEL = "qwen2.5:32b";
     private static final String DEFAULT_GITHUB_MODEL = "gpt-5";
-    private static final String DEFAULT_COPILOT_MODEL = "claude-opus-4.7";
+    private static final String DEFAULT_COPILOT_MODEL = "claude-opus-4.8";
 
     // Services
     private final CompetenceGoalService competenceGoalService;

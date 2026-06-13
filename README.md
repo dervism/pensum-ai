@@ -20,8 +20,23 @@ The application is configurable and supports:
 - Java 23 or higher
 - Maven for building
 - One of the following LLM providers:
-   - **Ollama** (default): For local, private model hosting
-   - **GitHub Models API**: For cloud-based model access
+   - **GitHub Models API** (default): For cloud-based model access
+   - **Ollama**: For local models
+
+### Setting up GitHub Models API (Recommended)
+
+1. Create a GitHub fine-grained personal access token:
+    - Go to **GitHub** → **Settings** → **Developer settings** → **Personal access tokens** → **Fine-grained tokens**.
+    - Click **Generate new token**.
+    - Give the token a descriptive name and set an expiration date. (the token can be regenerated later on)
+    - Under **Permissions** → **Account permissions**, find **Models** and set its access level to **Read-only**.
+    - Click **Generate token** and copy the value (you won't be able to see it again).
+2. Export the token as an environment variable:
+```shell script
+export GH_TOKEN=your_github_token_here
+```
+Alternatively, you can also run the application in your editor and set up the token as a run configuration env variable.
+
 
 ### Setting up Ollama (Default Provider)
 
@@ -33,14 +48,6 @@ ollama pull qwen2.5:32b
 3. Ensure Ollama is running:
 ```shell script
 ollama serve
-```
-
-### Setting up GitHub Models API (Alternative)
-
-1. Create a GitHub Personal Access Token with appropriate permissions
-2. Export the token as an environment variable:
-```shell script
-export GH_TOKEN=your_github_token_here
 ```
 
 ## Building the Application
