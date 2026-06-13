@@ -17,7 +17,7 @@ The application is configurable and supports:
 
 ## Prerequisites
 
-- Java 23 or higher
+- Java 26 or higher
 - Maven for building
 - One of the following LLM providers:
    - **GitHub Models API** (default): For cloud-based model access
