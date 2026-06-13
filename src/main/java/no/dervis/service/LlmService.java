@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * Service for matching developer responses to competence goals using LLM.
- * Supports both Ollama and GitHub Models as LLM providers.
+ * Supports Ollama, GitHub Models, GitHub Copilot and LM Studio as LLM providers.
  */
 public class LlmService {
     // Constants
@@ -35,7 +35,8 @@ public class LlmService {
     public enum LlmProvider {
         OLLAMA,
         GITHUB_MODELS,
-        GITHUB_COPILOT
+        GITHUB_COPILOT,
+        LM_STUDIO
     }
 
     // Record for JSON deserialization
@@ -49,6 +50,8 @@ public class LlmService {
     private final LlmProvider defaultProvider;
     private final CopilotTokenService copilotTokenService;
     private final String defaultCopilotModel;
+    private final String lmStudioEndpoint;
+    private final String defaultLmStudioModel;
 
     /**
      * Creates a new LlmService with Ollama as the default provider.
@@ -59,7 +62,19 @@ public class LlmService {
      */
     public LlmService(ObjectMapper objectMapper, String ollamaEndpoint, String defaultOllamaModel, String defaultGithubModel) {
         this(objectMapper, ollamaEndpoint, defaultOllamaModel, defaultGithubModel,
-                null, null, LlmProvider.OLLAMA);
+                null, null, null, null, LlmProvider.OLLAMA);
+    }
+
+    /**
+     * Creates a new LlmService with LM Studio as the default provider.
+     *
+     * @param objectMapper Jackson object mapper for JSON processing
+     * @param lmStudioEndpoint URL endpoint for the LM Studio OpenAI-compatible API
+     * @param defaultLmStudioModel Default model name to use with LM Studio
+     */
+    public LlmService(ObjectMapper objectMapper, String lmStudioEndpoint, String defaultLmStudioModel) {
+        this(objectMapper, null, null, null,
+                null, null, lmStudioEndpoint, defaultLmStudioModel, LlmProvider.LM_STUDIO);
     }
 
     /**
@@ -69,7 +84,7 @@ public class LlmService {
      * @param defaultGithubModel Default GitHub model to use
      */
     public LlmService(ObjectMapper objectMapper, String defaultGithubModel) {
-        this(objectMapper, null, null, defaultGithubModel, null, null, LlmProvider.GITHUB_MODELS);
+        this(objectMapper, null, null, defaultGithubModel, null, null, null, null, LlmProvider.GITHUB_MODELS);
     }
 
     /**
@@ -85,7 +100,7 @@ public class LlmService {
         this(objectMapper, null, null, null,
                 Objects.requireNonNull(copilotTokenService, "CopilotTokenService must not be null"),
                 Objects.requireNonNull(defaultCopilotModel, "Default Copilot model must not be null"),
-                LlmProvider.GITHUB_COPILOT);
+                null, null, LlmProvider.GITHUB_COPILOT);
     }
 
     /**
@@ -98,6 +113,8 @@ public class LlmService {
             String defaultGithubModel,
             CopilotTokenService copilotTokenService,
             String defaultCopilotModel,
+            String lmStudioEndpoint,
+            String defaultLmStudioModel,
             LlmProvider defaultProvider) {
 
         this.objectMapper = Objects.requireNonNull(objectMapper, "ObjectMapper must not be null");
@@ -125,6 +142,14 @@ public class LlmService {
             this.copilotTokenService = copilotTokenService;
             this.defaultCopilotModel = defaultCopilotModel;
         }
+
+        if (defaultProvider == LlmProvider.LM_STUDIO) {
+            this.lmStudioEndpoint = Objects.requireNonNull(lmStudioEndpoint, "LM Studio endpoint must not be null when using LM Studio");
+            this.defaultLmStudioModel = Objects.requireNonNull(defaultLmStudioModel, "Default LM Studio model must not be null when using LM Studio");
+        } else {
+            this.lmStudioEndpoint = lmStudioEndpoint;
+            this.defaultLmStudioModel = defaultLmStudioModel;
+        }
     }
 
     /**
@@ -143,6 +168,7 @@ public class LlmService {
             case OLLAMA -> matchCompetenceGoalsWithOllama(developerResponse, competenceGoals, defaultOllamaModel);
             case GITHUB_MODELS -> matchCompetenceGoalsWithGitHubModel(developerResponse, competenceGoals, defaultGithubModel);
             case GITHUB_COPILOT -> matchCompetenceGoalsWithCopilot(developerResponse, competenceGoals, defaultCopilotModel);
+            case LM_STUDIO -> matchCompetenceGoalsWithLmStudio(developerResponse, competenceGoals, defaultLmStudioModel);
         };
     }
 
@@ -206,6 +232,31 @@ public class LlmService {
     }
 
     /**
+     * Matches developer's response to competence goals using LM Studio with the specified model.
+     *
+     * @param developerResponse The developer's description of their tasks
+     * @param competenceGoals The list of competence goals to match against
+     * @param modelName The LM Studio model name to use
+     * @return A list of matching competence goals with their matching subgoals
+     * @throws IOException If an I/O error occurs during LLM communication
+     * @throws InterruptedException If the operation is interrupted
+     * @throws IllegalStateException If LM Studio is not properly configured
+     */
+    public List<CompetenceGoal> matchCompetenceGoalsWithLmStudio(
+            String developerResponse,
+            List<CompetenceGoal> competenceGoals,
+            String modelName) throws IOException, InterruptedException {
+
+        if (lmStudioEndpoint == null) {
+            throw new IllegalStateException("LM Studio endpoint is not configured");
+        }
+
+        String prompt = createMatchingPrompt(developerResponse, competenceGoals);
+        String llmResponse = generateLmStudioResponse(prompt, modelName);
+        return parseMatchingResponse(llmResponse, competenceGoals);
+    }
+
+    /**
      * Generates a response using Ollama model.
      */
     private String generateOllamaResponse(String prompt, String modelName) {
@@ -213,6 +264,22 @@ public class LlmService {
                 .baseUrl(ollamaEndpoint)
                 .modelName(modelName)
                 .timeout(DEFAULT_TIMEOUT)
+                .build();
+
+        return model.chat(prompt);
+    }
+
+    /**
+     * Generates a response using LM Studio via its OpenAI-compatible chat-completions endpoint.
+     */
+    private String generateLmStudioResponse(String prompt, String modelName) {
+        OpenAiChatModel model = OpenAiChatModel.builder()
+                .baseUrl(lmStudioEndpoint)
+                .apiKey("lm-studio")
+                .modelName(modelName)
+                .timeout(DEFAULT_TIMEOUT)
+                .logRequests(false)
+                .logResponses(false)
                 .build();
 
         return model.chat(prompt);

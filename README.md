@@ -1,6 +1,8 @@
 # PensumAI - Competence Goal Matcher
 
-A Java application that matches developer skills with competence goals using Large Language Models (LLMs). This tool helps developers identify which competence goals they meet based on their work descriptions.PS: The application works best when it is run with GitHub Models.
+The application allows IT-utviklerfaget students to 
+
+A Java application that matches developer skills with competence goals using Large Language Models (LLMs). This tool helps developers identify which competence goals they meet based on their work descriptions. PS: The application works best when it is run with GitHub Models.
 
 ## Overview
 
@@ -12,7 +14,7 @@ The Competence Goal Matcher:
 
 The application is configurable and supports:
 - Multiple languages (English and Norwegian)
-- Different LLM providers (Ollama and GitHub Models)
+- Different LLM providers (Ollama, LM Studio, and GitHub Models)
 - Various LLM models for different quality/performance needs
 
 ## Prerequisites
@@ -21,7 +23,10 @@ The application is configurable and supports:
 - Maven for building
 - One of the following LLM providers:
    - **GitHub Models API** (default): For cloud-based model access
-   - **Ollama**: For local models
+   - **Ollama**: For local models via by Ollama server
+   - **LM Studio**: For local models via LM Studio server
+
+For setting up local llm-providers, see guide below.
 
 ### Setting up GitHub Models API (Recommended)
 
@@ -78,7 +83,10 @@ java -jar target/pensumai.jar --provider GITHUB_MODELS
 java -jar target/pensumai.jar --ollama-model llama3
 
 # Use a specific GitHub model
-java -jar target/pensumai.jar --provider GITHUB_MODELS --github-model GPT_4_O_MINI
+java -jar target/pensumai.jar --provider GITHUB_MODELS --github-model GPT_5
+
+# Use LM Studio as provider
+java -jar target/pensumai.jar --provider LM_STUDIO --lmstudio-model local-model
 
 # Display help
 java -jar target/pensumai.jar --help
@@ -86,13 +94,14 @@ java -jar target/pensumai.jar --help
 
 ### Command Line Options
 
-| Option | Short | Description | Default |
-|--------|-------|-------------|---------|
-| `--language <code>` | `-l` | Language code for competence goals | `en` |
-| `--provider <provider>` | `-p` | LLM provider (OLLAMA or GITHUB_MODELS) | `OLLAMA` |
+| Option | Short | Description | Default           |
+|--------|-------|-------------|-------------------|
+| `--language <code>` | `-l` | Language code for competence goals | `en`              |
+| `--provider <provider>` | `-p` | LLM provider (OLLAMA, GITHUB_MODELS, GITHUB_COPILOT or LM_STUDIO) | `OLLAMA`          |
 | `--ollama-model <model>` | `-om` | Ollama model to use | `qwen2.5:32b:32b` |
-| `--github-model <model>` | `-gm` | GitHub model to use | `GPT_4_O_MINI` |
-| `--help` | `-h` | Show help message | |
+| `--github-model <model>` | `-gm` | GitHub model to use | `GPT_5`           |
+| `--lmstudio-model <model>` | `-lm` | LM Studio model to use | `local-model`     |
+| `--help` | `-h` | Show help message |                   |
 
 ## Interactive Usage
 
@@ -156,7 +165,14 @@ Matching subgoals:
 ### GitHub Models API
 - Cloud-based, high-quality models
 - Requires GitHub authentication and API token
-- Supports models like GPT_4_O_MINI, CLAUDE_3_5_SONNET, and others
+- Supports models like GPT_5 and others
+
+See [https://github.com/marketplace?type=models](https://github.com/marketplace?type=models) for a list of supported models.
+
+### LM Studio
+- Free, locally-hosted models via an OpenAI-compatible server
+- Start the LM Studio local server (default endpoint `http://localhost:1234/v1`) and load a model
+- Select with `--provider LM_STUDIO`; choose the loaded model with `--lmstudio-model`
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.

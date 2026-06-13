@@ -27,6 +27,8 @@ public class App {
     private static final String DEFAULT_OLLAMA_MODEL = "qwen2.5:32b";
     private static final String DEFAULT_GITHUB_MODEL = "gpt-5";
     private static final String DEFAULT_COPILOT_MODEL = "claude-opus-4.8";
+    private static final String LM_STUDIO_ENDPOINT = "http://localhost:1234/v1";
+    private static final String DEFAULT_LM_STUDIO_MODEL = "local-model";
 
     // Services
     private final CompetenceGoalService competenceGoalService;
@@ -175,6 +177,8 @@ public class App {
                 yield new LlmService(objectMapper, tokenService,
                         options.copilotModel().orElse(DEFAULT_COPILOT_MODEL));
             }
+            case LM_STUDIO -> new LlmService(objectMapper, LM_STUDIO_ENDPOINT,
+                    options.lmStudioModel().orElse(DEFAULT_LM_STUDIO_MODEL));
         };
     }
 
@@ -190,6 +194,7 @@ public class App {
         Optional<String> ollamaModel = Optional.empty();
         Optional<String> githubModel = Optional.empty();
         Optional<String> copilotModel = Optional.empty();
+        Optional<String> lmStudioModel = Optional.empty();
 
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
@@ -224,6 +229,11 @@ public class App {
                         copilotModel = Optional.of(args[++i]);
                     }
                 }
+                case "--lmstudio-model", "-lm" -> {
+                    if (i + 1 < args.length) {
+                        lmStudioModel = Optional.of(args[++i]);
+                    }
+                }
                 case "--copilot-logout" -> {
                     try {
                         CopilotDeviceFlow.clearCache();
@@ -240,7 +250,7 @@ public class App {
             }
         }
 
-        return new CommandLineOptions(language, provider, ollamaModel, githubModel, copilotModel);
+        return new CommandLineOptions(language, provider, ollamaModel, githubModel, copilotModel, lmStudioModel);
     }
 
     /**
@@ -255,11 +265,12 @@ public class App {
               
             Options:
               -l,  --language <code>       Language code for competence goals (default: en)
-              -p,  --provider <provider>   LLM provider: OLLAMA, GITHUB_MODELS, GITHUB_COPILOT
-                                            (default: GITHUB_MODELS)
+              -p,  --provider <provider>   LLM provider: OLLAMA, GITHUB_MODELS, GITHUB_COPILOT,
+                                            LM_STUDIO (default: GITHUB_MODELS)
               -om, --ollama-model <model>  Ollama model to use (default: qwen2.5:32b)
               -gm, --github-model <model>  GitHub Models model (default: gpt-5)
               -cm, --copilot-model <model> Copilot model id (default: claude-opus-4.7)
+              -lm, --lmstudio-model <model> LM Studio model (default: local-model)
                    --copilot-logout        Clear the cached GitHub OAuth token
               -h,  --help                  Show this help message
               
@@ -278,6 +289,7 @@ public class App {
             LlmProvider provider,
             Optional<String> ollamaModel,
             Optional<String> githubModel,
-            Optional<String> copilotModel
+            Optional<String> copilotModel,
+            Optional<String> lmStudioModel
     ) {}
 }
