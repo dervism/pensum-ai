@@ -2,6 +2,8 @@ package no.dervis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.model.github.GitHubModelsChatModelName;
+import no.dervis.copilot.CopilotDeviceFlow;
+import no.dervis.copilot.CopilotTokenService;
 import no.dervis.model.CompetenceGoal;
 import no.dervis.service.CompetenceGoalService;
 import no.dervis.service.LlmService;
@@ -25,6 +27,7 @@ public class App {
     private static final String OLLAMA_ENDPOINT = "http://localhost:11434";
     private static final String DEFAULT_OLLAMA_MODEL = "qwen2.5:32b";
     private static final GitHubModelsChatModelName DEFAULT_GITHUB_MODEL = GitHubModelsChatModelName.GPT_4_O_MINI;
+    private static final String DEFAULT_COPILOT_MODEL = "claude-opus-4.7";
 
     // Services
     private final CompetenceGoalService competenceGoalService;
@@ -167,6 +170,12 @@ public class App {
         return switch (options.provider()) {
             case OLLAMA -> new LlmService(objectMapper, OLLAMA_ENDPOINT, options.ollamaModel().orElse(DEFAULT_OLLAMA_MODEL));
             case GITHUB_MODELS -> new LlmService(objectMapper, options.githubModel().orElse(DEFAULT_GITHUB_MODEL));
+            case GITHUB_COPILOT -> {
+                CopilotDeviceFlow deviceFlow = new CopilotDeviceFlow(objectMapper);
+                CopilotTokenService tokenService = new CopilotTokenService(deviceFlow, objectMapper);
+                yield new LlmService(objectMapper, tokenService,
+                        options.copilotModel().orElse(DEFAULT_COPILOT_MODEL));
+            }
         };
     }
 
@@ -181,6 +190,7 @@ public class App {
         LlmProvider provider = LlmProvider.GITHUB_MODELS;
         Optional<String> ollamaModel = Optional.empty();
         Optional<GitHubModelsChatModelName> githubModel = Optional.empty();
+        Optional<String> copilotModel = Optional.empty();
 
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
@@ -215,6 +225,20 @@ public class App {
                         }
                     }
                 }
+                case "--copilot-model", "-cm" -> {
+                    if (i + 1 < args.length) {
+                        copilotModel = Optional.of(args[++i]);
+                    }
+                }
+                case "--copilot-logout" -> {
+                    try {
+                        CopilotDeviceFlow.clearCache();
+                        System.out.println("Cleared cached GitHub OAuth token.");
+                    } catch (IOException e) {
+                        System.err.println("Failed to clear token cache: " + e.getMessage());
+                    }
+                    System.exit(0);
+                }
                 case "--help", "-h" -> {
                     printHelp();
                     System.exit(0);
@@ -222,7 +246,7 @@ public class App {
             }
         }
 
-        return new CommandLineOptions(language, provider, ollamaModel, githubModel);
+        return new CommandLineOptions(language, provider, ollamaModel, githubModel, copilotModel);
     }
 
     /**
@@ -236,11 +260,19 @@ public class App {
               java -jar competence-goal-matcher.jar [options]
               
             Options:
-              -l, --language <code>       Language code for competence goals (default: en)
-              -p, --provider <provider>   LLM provider to use (OLLAMA or GITHUB_MODELS, default: OLLAMA)
-              -om, --ollama-model <model> Ollama model to use (default: llama3)
-              -gm, --github-model <model> GitHub model to use (default: GPT_4_O_MINI)
-              -h, --help                  Show this help message
+              -l,  --language <code>       Language code for competence goals (default: en)
+              -p,  --provider <provider>   LLM provider: OLLAMA, GITHUB_MODELS, GITHUB_COPILOT
+                                            (default: GITHUB_MODELS)
+              -om, --ollama-model <model>  Ollama model to use (default: qwen2.5:32b)
+              -gm, --github-model <model>  GitHub Models model (default: GPT_4_O_MINI)
+              -cm, --copilot-model <model> Copilot model id (default: claude-opus-4.7)
+                   --copilot-logout        Clear the cached GitHub OAuth token
+              -h,  --help                  Show this help message
+              
+            Using GitHub Copilot:
+              On first run with --provider GITHUB_COPILOT, the app starts a GitHub
+              device-flow sign-in. Open the URL it prints and enter the one-time
+              code. The OAuth token is cached under ~/.config/pensumai/.
             """);
     }
 
@@ -251,6 +283,7 @@ public class App {
             String language,
             LlmProvider provider,
             Optional<String> ollamaModel,
-            Optional<GitHubModelsChatModelName> githubModel
+            Optional<GitHubModelsChatModelName> githubModel,
+            Optional<String> copilotModel
     ) {}
 }

@@ -3,10 +3,12 @@ package no.dervis.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.github.GitHubModelsChatModel;
 import dev.langchain4j.model.github.GitHubModelsChatModelName;
 import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+import no.dervis.copilot.CopilotTokenService;
 import no.dervis.model.CompetenceGoal;
 
 import java.io.IOException;
@@ -34,7 +36,8 @@ public class LlmService {
      */
     public enum LlmProvider {
         OLLAMA,
-        GITHUB_MODELS
+        GITHUB_MODELS,
+        GITHUB_COPILOT
     }
 
     // Record for JSON deserialization
@@ -46,6 +49,8 @@ public class LlmService {
     private final String defaultOllamaModel;
     private final GitHubModelsChatModelName defaultGithubModel;
     private final LlmProvider defaultProvider;
+    private final CopilotTokenService copilotTokenService;
+    private final String defaultCopilotModel;
 
     /**
      * Creates a new LlmService with Ollama as the default provider.
@@ -55,7 +60,8 @@ public class LlmService {
      * @param defaultOllamaModel Default model name to use with Ollama
      */
     public LlmService(ObjectMapper objectMapper, String ollamaEndpoint, String defaultOllamaModel) {
-        this(objectMapper, ollamaEndpoint, defaultOllamaModel, GitHubModelsChatModelName.GPT_4_O_MINI, LlmProvider.OLLAMA);
+        this(objectMapper, ollamaEndpoint, defaultOllamaModel, GitHubModelsChatModelName.GPT_4_O_MINI,
+                null, null, LlmProvider.OLLAMA);
     }
 
     /**
@@ -65,23 +71,35 @@ public class LlmService {
      * @param defaultGithubModel Default GitHub model to use
      */
     public LlmService(ObjectMapper objectMapper, GitHubModelsChatModelName defaultGithubModel) {
-        this(objectMapper, null, null, defaultGithubModel, LlmProvider.GITHUB_MODELS);
+        this(objectMapper, null, null, defaultGithubModel, null, null, LlmProvider.GITHUB_MODELS);
+    }
+
+    /**
+     * Creates a new LlmService with GitHub Copilot as the default provider.
+     *
+     * @param objectMapper Jackson object mapper for JSON processing
+     * @param copilotTokenService Service that provides Copilot bearer tokens
+     * @param defaultCopilotModel Default Copilot model id (e.g. "claude-opus-4.7")
+     */
+    public LlmService(ObjectMapper objectMapper,
+                      CopilotTokenService copilotTokenService,
+                      String defaultCopilotModel) {
+        this(objectMapper, null, null, null,
+                Objects.requireNonNull(copilotTokenService, "CopilotTokenService must not be null"),
+                Objects.requireNonNull(defaultCopilotModel, "Default Copilot model must not be null"),
+                LlmProvider.GITHUB_COPILOT);
     }
 
     /**
      * Creates a new LlmService with complete configuration.
-     *
-     * @param objectMapper Jackson object mapper for JSON processing
-     * @param ollamaEndpoint URL endpoint for Ollama API (can be null if not using Ollama)
-     * @param defaultOllamaModel Default model name for Ollama (can be null if not using Ollama)
-     * @param defaultGithubModel Default GitHub model (can be null if not using GitHub Models)
-     * @param defaultProvider The default LLM provider to use
      */
     public LlmService(
             ObjectMapper objectMapper,
             String ollamaEndpoint,
             String defaultOllamaModel,
             GitHubModelsChatModelName defaultGithubModel,
+            CopilotTokenService copilotTokenService,
+            String defaultCopilotModel,
             LlmProvider defaultProvider) {
 
         this.objectMapper = Objects.requireNonNull(objectMapper, "ObjectMapper must not be null");
@@ -92,14 +110,22 @@ public class LlmService {
             this.ollamaEndpoint = Objects.requireNonNull(ollamaEndpoint, "Ollama endpoint must not be null when using Ollama");
             this.defaultOllamaModel = Objects.requireNonNull(defaultOllamaModel, "Default Ollama model must not be null when using Ollama");
         } else {
-            this.ollamaEndpoint = ollamaEndpoint; // Can be null
-            this.defaultOllamaModel = defaultOllamaModel; // Can be null
+            this.ollamaEndpoint = ollamaEndpoint;
+            this.defaultOllamaModel = defaultOllamaModel;
         }
 
         if (defaultProvider == LlmProvider.GITHUB_MODELS) {
             this.defaultGithubModel = Objects.requireNonNull(defaultGithubModel, "Default GitHub model must not be null when using GitHub Models");
         } else {
-            this.defaultGithubModel = defaultGithubModel; // Can be null
+            this.defaultGithubModel = defaultGithubModel;
+        }
+
+        if (defaultProvider == LlmProvider.GITHUB_COPILOT) {
+            this.copilotTokenService = Objects.requireNonNull(copilotTokenService, "CopilotTokenService must not be null when using GitHub Copilot");
+            this.defaultCopilotModel = Objects.requireNonNull(defaultCopilotModel, "Default Copilot model must not be null when using GitHub Copilot");
+        } else {
+            this.copilotTokenService = copilotTokenService;
+            this.defaultCopilotModel = defaultCopilotModel;
         }
     }
 
@@ -115,11 +141,11 @@ public class LlmService {
     public List<CompetenceGoal> matchCompetenceGoals(String developerResponse, List<CompetenceGoal> competenceGoals)
             throws IOException, InterruptedException {
 
-        if (defaultProvider == LlmProvider.OLLAMA) {
-            return matchCompetenceGoalsWithOllama(developerResponse, competenceGoals, defaultOllamaModel);
-        } else {
-            return matchCompetenceGoalsWithGitHubModel(developerResponse, competenceGoals, defaultGithubModel);
-        }
+        return switch (defaultProvider) {
+            case OLLAMA -> matchCompetenceGoalsWithOllama(developerResponse, competenceGoals, defaultOllamaModel);
+            case GITHUB_MODELS -> matchCompetenceGoalsWithGitHubModel(developerResponse, competenceGoals, defaultGithubModel);
+            case GITHUB_COPILOT -> matchCompetenceGoalsWithCopilot(developerResponse, competenceGoals, defaultCopilotModel);
+        };
     }
 
 
@@ -150,13 +176,6 @@ public class LlmService {
 
     /**
      * Matches developer's response to competence goals using a GitHub model.
-     *
-     * @param developerResponse The developer's description of their tasks
-     * @param competenceGoals The list of competence goals to match against
-     * @param githubModel The GitHub model to use
-     * @return A list of matching competence goals with their matching subgoals
-     * @throws IOException If an I/O error occurs during LLM communication
-     * @throws InterruptedException If the operation is interrupted
      */
     public List<CompetenceGoal> matchCompetenceGoalsWithGitHubModel(
             String developerResponse,
@@ -169,10 +188,30 @@ public class LlmService {
     }
 
     /**
+     * Matches developer's response to competence goals using a GitHub Copilot model.
+     *
+     * @param developerResponse The developer's description of their tasks
+     * @param competenceGoals The list of competence goals to match against
+     * @param copilotModel The Copilot model id (e.g. "claude-opus-4.7")
+     */
+    public List<CompetenceGoal> matchCompetenceGoalsWithCopilot(
+            String developerResponse,
+            List<CompetenceGoal> competenceGoals,
+            String copilotModel) throws IOException, InterruptedException {
+
+        if (copilotTokenService == null) {
+            throw new IllegalStateException("Copilot token service is not configured");
+        }
+        String prompt = createMatchingPrompt(developerResponse, competenceGoals);
+        String llmResponse = generateCopilotResponse(prompt, copilotModel);
+        return parseMatchingResponse(llmResponse, competenceGoals);
+    }
+
+    /**
      * Generates a response using Ollama model.
      */
     private String generateOllamaResponse(String prompt, String modelName) {
-        ChatLanguageModel model = OllamaChatModel.builder()
+        ChatModel model = OllamaChatModel.builder()
                 .baseUrl(ollamaEndpoint)
                 .modelName(modelName)
                 .timeout(DEFAULT_TIMEOUT)
@@ -189,6 +228,31 @@ public class LlmService {
                 .gitHubToken(GH_TOKEN)
                 .modelName(githubModel)
                 .logRequestsAndResponses(false)
+                .build();
+
+        return model.chat(prompt);
+    }
+
+    /**
+     * Generates a response using GitHub Copilot via its OpenAI-compatible chat-completions endpoint.
+     */
+    private String generateCopilotResponse(String prompt, String copilotModel) throws IOException, InterruptedException {
+        String copilotToken = copilotTokenService.getToken();
+
+        OpenAiChatModel model = OpenAiChatModel.builder()
+                .baseUrl("https://api.githubcopilot.com")
+                .apiKey(copilotToken)
+                .modelName(copilotModel)
+                .timeout(DEFAULT_TIMEOUT)
+                .customHeaders(Map.of(
+                        "Copilot-Integration-Id", "vscode-chat",
+                        "Editor-Version", "vscode/1.95.0",
+                        "Editor-Plugin-Version", "copilot-chat/0.23.0",
+                        "User-Agent", "GitHubCopilotChat/0.23.0",
+                        "OpenAI-Intent", "conversation-panel"
+                ))
+                .logRequests(false)
+                .logResponses(false)
                 .build();
 
         return model.chat(prompt);
